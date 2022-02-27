@@ -1,0 +1,71 @@
+package snakegame;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+
+public class Main {
+	static List<String>[] createScreen(int[] position) {
+		int rows = 20;
+		int columns = 10;
+		List<String>[] screen = new List[columns];
+		for (int i = 0; i < columns; i++) {
+			List<String> row = new ArrayList<String>();
+			for (int j = 0; j < rows; j++) {
+				if (j == position[0] && i == position[1]+1) {
+					row.add(" ");
+				}
+				else {
+					row.add("█");
+				}
+			}
+			screen[i] = row;
+		}
+		return screen;
+	}
+	
+	static void printScreen(List<String>[] layout) {
+		for (int i = 0; i < layout.length; i++) {
+			List<String> row = layout[i];
+			for (int j = 0; j < row.size(); j++) {
+				System.out.print(row.get(j));
+			}
+			System.out.print("\n");
+		}
+	}
+	
+	static void clearScreen() {
+	    System.out.print("\033[H\033[2J");  
+	    System.out.flush(); 
+	}
+	
+	static int[] setNewLocation(int[] location, KeyEvent e) {
+		int[] newpos = location;
+		int keycode = e.getKeyCode();
+		System.out.println();
+		// Left
+		if (keycode == KeyEvent.VK_LEFT) {newpos[0] -= 1;}
+		// Up
+		if (keycode == KeyEvent.VK_UP) {newpos[1] -= 1;}
+		// Down
+		if (keycode == KeyEvent.VK_DOWN) {newpos[0] -= 1;}
+		// Right
+		if (keycode == KeyEvent.VK_RIGHT) {newpos[0] += 1;}
+		return newpos;
+	}
+	
+	public static void main(String[] args) throws InterruptedException, IOException {
+		Random rand = new Random();
+		int[] position = {rand.nextInt(19),rand.nextInt(9)};
+		for (int i = 0; i < 10; i++) {
+			List<String>[] screen = createScreen(position);
+			clearScreen();
+			printScreen(screen);
+			position = setNewLocation(position, 1);
+			TimeUnit.MILLISECONDS.sleep(500);
+		}
+	}
+}

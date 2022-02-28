@@ -1,15 +1,11 @@
 # jnake
 Terminal snake written in Java
 
-## How to compile
-Two options:
-1. Eclipse:  
-* Clone repository  
-* Set as eclipse workspace
-* File -> Export -> Java -> Runnable JAR file
-2. Clone repository and do:
+## How to compile (outputs to <srcdir>/lib/build/libs/jnake.jar
+Linux:
 ```
-cd src/jnake
-javac Main.java
+./gradlew build
 ```
-Then you can run `java Main` from that directory
+Windows:
+Not tested on windows  
+Will most likely compile but not run as

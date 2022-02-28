@@ -72,8 +72,8 @@ public class Main {
 		String[] dimensions = getTermSize().split(" ");
 		int height = Integer.valueOf(dimensions[0])-2;
 		int width = Integer.valueOf(dimensions[1]);
-		if (width > 80) width = 80;
-		if (height > 24) height = 24;
+		if (width > 100) width = 100;
+		if (height > 50) height = 50;
 		System.out.println(width);
 		for (int i = 0; i < 10; i++) {
 			int[] position = {rand.nextInt(width-1),rand.nextInt(23)};

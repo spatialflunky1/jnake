@@ -15,5 +15,6 @@ jar {
 		)
 	}
 	baseName = 'jnake'
-	version = '022722' // the date (in mmddyy)
+	// Only use version when publishing a release
+	// version = '220228' // the date (in yymmdd)
 }

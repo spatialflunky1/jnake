@@ -9,3 +9,6 @@ build
 .settings
 .project
 .classpath
+
+# Ignore compiled java files 
+*.class

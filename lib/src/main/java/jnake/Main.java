@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import jline.ConsoleReader;
 
 public class Main {
 	
@@ -44,27 +44,18 @@ public class Main {
 	    System.out.flush(); 
 	}
 	
-	static int[] setNewLocation(int[] location, KeyEvent e) {
-		int[] newpos = location;
-		int keycode = e.getKeyCode();
-		System.out.println();
-		// Left
-		if (keycode == KeyEvent.VK_LEFT) {newpos[0] -= 1;}
-		// Up
-		if (keycode == KeyEvent.VK_UP) {newpos[1] -= 1;}
-		// Down
-		if (keycode == KeyEvent.VK_DOWN) {newpos[0] -= 1;}
-		// Right
-		if (keycode == KeyEvent.VK_RIGHT) {newpos[0] += 1;}
-		return newpos;
-	}
-	
 	static String getTermSize() throws IOException, InterruptedException {
 		ProcessBuilder sizeCommand = new ProcessBuilder("/bin/sh", "-c", "stty size </dev/tty");
 		final Process p = sizeCommand.start();
 		BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		return out.readLine();
-		
+	}
+	
+	static int[] changePos(String move, int[] position) {
+		int [] pos = position;
+		if (move == "up") {pos[1]++;}
+		if (move == "down") {pos[1]--;}
+		return pos;
 	}
 	
 	public static void main(String[] args) throws InterruptedException, IOException {
@@ -72,15 +63,26 @@ public class Main {
 		String[] dimensions = getTermSize().split(" ");
 		int height = Integer.valueOf(dimensions[0])-2;
 		int width = Integer.valueOf(dimensions[1]);
-		if (width > 100) width = 100;
-		if (height > 50) height = 50;
-		System.out.println(width);
-		for (int i = 0; i < 10; i++) {
-			int[] position = {rand.nextInt(width-1),rand.nextInt(23)};
+		if (width > 115) width = 115;
+		if (height > 60) height = 60;
+		int[] position = {rand.nextInt(width-1),rand.nextInt(height-1)};
+		ConsoleReader reader = new ConsoleReader();
+		int key;
+		String move = "none";
+		while ((key = reader.readVirtualKey()) != 1) {
+			switch (key) {
+			case 65539:
+				move = "up";
+				break;
+			case 65540:
+				move = "down";
+				break;
+			}
+			position = changePos(move, position);
 			List<String>[] screen = createScreen(position, width, height);
 			clearScreen();
 			printScreen(screen);
-			TimeUnit.MILLISECONDS.sleep(500);
+			TimeUnit.MILLISECONDS.sleep(100);
 		}
 	}
 }

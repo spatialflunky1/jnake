@@ -12,10 +12,8 @@ CMD:
 Powershell:
 `.\gradlew build`  
   
-Not tested on windows  
-Will most likely compile but not run as depends on linux command  
-(nvm it doesn't compile, will fix soon)  
-(it might compile the error was a java installation error)
+Currently it will compile but not run because it depends on the linux `stty` command  
+Planning on implementing a check for running on linux later
   
 ## Planned features
 * Windows support

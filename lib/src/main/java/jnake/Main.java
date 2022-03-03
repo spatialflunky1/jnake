@@ -7,12 +7,15 @@ import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import jline.ConsoleReader;
+import java.lang.Thread;
+import org.jline.terminal.TerminalBuilder;
 
 public class Main {
+	public static int key;
+	public static String move = "none";
 	
-	static List<String>[] createScreen(int[] position, int columns, int rows) {
-		List<String>[] screen = new List[rows];
+	static List<List<String>> createScreen(int[] position, int columns, int rows) {
+		List<List<String>> screen = new ArrayList<List<String>>();
 		for (int i = 0; i < rows; i++) {
 			List<String> row = new ArrayList<String>();
 			for (int j = 0; j < columns; j++) {
@@ -23,20 +26,20 @@ public class Main {
 					row.add("█");
 				}
 			}
-			screen[i] = row;
+			screen.add(row);
 		}
 		return screen;
 	}
 	
-	static void printScreen(List<String>[] layout) {
-		for (int i = 0; i < layout.length; i++) {
-			List<String> row = layout[i];
+	static void printScreen(List<List<String>> layout, int score) {
+		for (int i = 0; i < layout.size(); i++) {
+			List<String> row = layout.get(i);
 			for (int j = 0; j < row.size(); j++) {
 				System.out.print(row.get(j));
 			}
 			System.out.print("\n");
 		}
-		System.out.println("Score: 0");
+		System.out.println("Score: "+score+" (key value for testing) (press 'q' to quit)");
 	}
 	
 	static void clearScreen() {
@@ -53,8 +56,10 @@ public class Main {
 	
 	static int[] changePos(String move, int[] position) {
 		int [] pos = position;
-		if (move == "up") {pos[1]++;}
-		if (move == "down") {pos[1]--;}
+		if (move == "up") {pos[1]--;}
+		if (move == "down") {pos[1]++;}
+		if (move == "left") {pos[0]--;}
+		if (move == "right") {pos[0]++;}
 		return pos;
 	}
 	
@@ -66,22 +71,44 @@ public class Main {
 		if (width > 115) width = 115;
 		if (height > 60) height = 60;
 		int[] position = {rand.nextInt(width-1),rand.nextInt(height-1)};
-		ConsoleReader reader = new ConsoleReader();
-		int key;
-		String move = "none";
-		while ((key = reader.readVirtualKey()) != 1) {
-			switch (key) {
-			case 65539:
-				move = "up";
-				break;
-			case 65540:
-				move = "down";
-				break;
-			}
+		var term = TerminalBuilder.terminal();
+		term.enterRawMode();
+		var reader = term.reader();
+		
+		new Thread(() -> {
+		    while (true) {
+		    	try {
+					key = reader.read();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				switch (key) {
+				case 113:
+					System.exit(0);
+					break;
+				case 66:
+					move = "down";
+					break;
+				case 67:
+					move = "right";
+					break;
+				case 68:
+					move = "left";
+					break;
+				case 65:
+					move = "up";
+					break;
+				default:
+					break;
+				}
+		    }
+		}).start();
+		
+		while (true) {
 			position = changePos(move, position);
-			List<String>[] screen = createScreen(position, width, height);
+			List<List<String>> screen = createScreen(position, width, height);
 			clearScreen();
-			printScreen(screen);
+			printScreen(screen, key);
 			TimeUnit.MILLISECONDS.sleep(100);
 		}
 	}

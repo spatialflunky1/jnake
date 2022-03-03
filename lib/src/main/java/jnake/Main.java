@@ -31,7 +31,7 @@ public class Main {
 		return screen;
 	}
 	
-	static void printScreen(List<List<String>> layout, int score) {
+	static void printScreen(List<List<String>> layout, int[] score) {
 		for (int i = 0; i < layout.size(); i++) {
 			List<String> row = layout.get(i);
 			for (int j = 0; j < row.size(); j++) {
@@ -39,7 +39,7 @@ public class Main {
 			}
 			System.out.print("\n");
 		}
-		System.out.println("Score: "+score+" (key value for testing) (press 'q' to quit)");
+		System.out.println("Score: "+String.valueOf(score[1])+" (y value for testing) (press 'q' to quit)");
 	}
 	
 	static void clearScreen() {
@@ -47,34 +47,36 @@ public class Main {
 	    System.out.flush(); 
 	}
 	
-	static String getTermSize() throws IOException, InterruptedException {
+	static int[] getTermSize() throws IOException, InterruptedException {
 		ProcessBuilder sizeCommand = new ProcessBuilder("/bin/sh", "-c", "stty size </dev/tty");
 		final Process p = sizeCommand.start();
 		BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		return out.readLine();
+		String[] temp = out.readLine().split(" ");
+		int[] dimensions = {Integer.valueOf(temp[0]), Integer.valueOf(temp[1])};
+		return dimensions;
 	}
 	
-	static int[] changePos(String move, int[] position) {
+	static int[] changePos(String move, int[] position, int[] maxSize) {
 		int [] pos = position;
-		if (move == "up") {pos[1]--;}
-		if (move == "down") {pos[1]++;}
-		if (move == "left") {pos[0]--;}
-		if (move == "right") {pos[0]++;}
+		if (move == "up" && pos[1] >= 0) {pos[1]--;}
+		if (move == "down" && pos[1]+5 <= maxSize[0]) {pos[1]++;}
+		if (move == "left" && pos[0] > 0) {pos[0]--;}
+		if (move == "right" && pos[0]+2 <= maxSize[1]) {pos[0]++;}
 		return pos;
 	}
 	
 	public static void main(String[] args) throws InterruptedException, IOException {
 		Random rand = new Random();
-		String[] dimensions = getTermSize().split(" ");
-		int height = Integer.valueOf(dimensions[0])-2;
-		int width = Integer.valueOf(dimensions[1]);
+		int[] dimensions = getTermSize();
+		int height = dimensions[0]-2;
+		int width = dimensions[1];
 		if (width > 115) width = 115;
 		if (height > 60) height = 60;
 		int[] position = {rand.nextInt(width-1),rand.nextInt(height-1)};
 		var term = TerminalBuilder.terminal();
 		term.enterRawMode();
 		var reader = term.reader();
-		
+		// New thread for keyboard input
 		new Thread(() -> {
 		    while (true) {
 		    	try {
@@ -105,10 +107,10 @@ public class Main {
 		}).start();
 		
 		while (true) {
-			position = changePos(move, position);
+			position = changePos(move, position, dimensions);
 			List<List<String>> screen = createScreen(position, width, height);
 			clearScreen();
-			printScreen(screen, key);
+			printScreen(screen, position);
 			TimeUnit.MILLISECONDS.sleep(100);
 		}
 	}

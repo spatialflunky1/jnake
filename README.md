@@ -7,8 +7,12 @@ Terminal snake written in Java
 ./gradlew build
 ```
 * Windows:  
-Not tested on windows  
-Will most likely compile but not run as depends on linux command
+CMD (cmd is stupid so this runs the batch file like its supposed to):  
+`gradlew build`  
+Powershell:  
+`.\gradlew.bat build`  
+  
+Currently it will compile but not run because it depends on the linux `stty` command  
   
 ## Planned features
 * Windows support

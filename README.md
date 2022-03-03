@@ -13,7 +13,9 @@ Powershell:
 `.\gradlew build`  
   
 Not tested on windows  
-Will most likely compile but not run as depends on linux command (nvm it doesn't compile, will fix soon)
+Will most likely compile but not run as depends on linux command  
+(nvm it doesn't compile, will fix soon)  
+(it might compile the error was a java installation error)
   
 ## Planned features
 * Windows support

@@ -7,10 +7,10 @@ Terminal snake written in Java
 ./gradlew build
 ```
 * Windows:  
-CMD:
+CMD (cmd is stupid so this runs the batch file like its supposed to):  
 `gradlew build`  
-Powershell:
-`.\gradlew build`  
+Powershell:  
+`.\gradlew.bat build`  
   
 Currently it will compile but not run because it depends on the linux `stty` command  
   

@@ -13,7 +13,6 @@ Powershell:
 `.\gradlew build`  
   
 Currently it will compile but not run because it depends on the linux `stty` command  
-Planning on implementing a check for running on linux later
   
 ## Planned features
 * Windows support

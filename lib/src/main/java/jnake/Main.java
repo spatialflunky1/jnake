@@ -82,8 +82,14 @@ public class Main {
 		int score = 0;
 		int height = dimensions[0]-2;
 		int width = dimensions[1];
-		if (width > 120) width = 120;
-		if (height > 50) height = 50;
+		if (width > 120) {
+			width = 120;
+			dimensions[1] = width;
+		}
+		if (height > 50) {
+			height = 48;
+			dimensions[0] = height+2;
+		}
 		int[][] positions = {{rand.nextInt(width-1),rand.nextInt(height-1)}};
 		var term = TerminalBuilder.terminal();
 		term.enterRawMode();

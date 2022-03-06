@@ -1,5 +1,7 @@
 package jnake;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.io.IOException;
@@ -14,7 +16,7 @@ public class Main {
 	public static int length = 1;
 	public static int[][] snakeList;
 	
-	static String[][] createScreen(int[][] positions, int columns, int rows) {
+	static String[][] createScreen(List<List<Integer>> positions, int columns, int rows) {
 		String[][] screen = new String[rows][columns];
 		for (int i = 0; i < rows; i++) {
 			String[] row = new String[columns];
@@ -23,8 +25,8 @@ public class Main {
 			}
 			screen[i] = row;
 		}
-		for (int i=0; i < positions.length; i++) {
-				screen[positions[i][1]][positions[i][0]] = " ";
+		for (int i=0; i < positions.size(); i++) {
+				screen[positions.get(i).get(1)][positions.get(i).get(0)] = " ";
 		}
 		return screen;
 	}
@@ -63,16 +65,21 @@ public class Main {
 		return dimensions;
 	}
 	
-	static int[][] changePos(String move, int[][] positions, int[] maxSize) throws InterruptedException {
+	static List<List<Integer>> changePos(String move, List<List<Integer>> positions, int[] maxSize) throws InterruptedException {
 		if (move == "quit") {
 			clearScreen();
 			System.exit(0);
 		}
-		int[][] pos = positions;
-		if (move == "up" && pos[0][1] > 0) {pos[0][1]--;}
-		if (move == "down" && pos[0][1]+4 <= maxSize[0]) {pos[0][1]++;}
-		if (move == "left" && pos[0][0] > 0) {pos[0][0]--;}
-		if (move == "right" && pos[0][0]+2 <= maxSize[1]) {pos[0][0]++;}
+		List<List<Integer>> pos = positions;
+		for (int i=0; i<1; i++) {
+			List<Integer> position = pos.get(i);
+			int y = position.get(1);
+			int x = position.get(0);
+			if (move == "up" && y > 0) {position.set(1, y-1);}
+			if (move == "down" && y+4 <= maxSize[0]) {position.set(1, y+1);}
+			if (move == "left" && x > 0) {position.set(0, x-1);}
+			if (move == "right" && x+2 <= maxSize[1]) {position.set(0, x+1);}
+		}
 		return pos;
 	}
 	
@@ -90,7 +97,11 @@ public class Main {
 			height = 48;
 			dimensions[0] = height+2;
 		}
-		int[][] positions = {{rand.nextInt(width-1),rand.nextInt(height-1)}};
+		List<List<Integer>> positions = new ArrayList<List<Integer>>();
+		List<Integer> initialPos = new ArrayList<Integer>();
+		initialPos.add(rand.nextInt(width-1));
+		initialPos.add(rand.nextInt(height-1));
+		positions.add(initialPos);
 		var term = TerminalBuilder.terminal();
 		term.enterRawMode();
 		var reader = term.reader();

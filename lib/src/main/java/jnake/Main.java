@@ -21,7 +21,12 @@ public class Main {
 		for (int i = 0; i < rows; i++) {
 			String[] row = new String[columns];
 			for (int j = 0; j < columns; j++) {
+				if (i == 0 || i == rows-1 || j == 0 || j == columns-1) {
+					row[j] = "█";
+				}
+				else {
 					row[j] = " ";
+				}
 			}
 			screen[i] = row;
 		}
@@ -76,6 +81,7 @@ public class Main {
 			int y = position.get(1);
 			int x = position.get(0);
 			List<Integer> newpos = new ArrayList<Integer>();
+			if ((y == 1 && move == "up") || (x == 1 && move == "left") || (y+4 == maxSize[0] && move == "down") || (x+2 == maxSize[1] && move == "right")) gameOver();
 			if (move == "up" && y > 0) y--; //index 1
 			if (move == "down" && y+4 <= maxSize[0]) y++; //index 1
 			if (move == "left" && x > 0) x--; //index 0
@@ -86,6 +92,13 @@ public class Main {
 			if (pos.size() > score+1) pos.remove(pos.size()-1);
 		}
 		return pos;
+	}
+	
+	public static void gameOver() throws InterruptedException {
+		clearScreen();
+		System.out.println("Game Over!");
+		TimeUnit.SECONDS.sleep(2);
+		System.exit(0);
 	}
 	
 	public static void main(String[] args) throws InterruptedException, IOException {

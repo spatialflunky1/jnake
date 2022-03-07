@@ -15,6 +15,7 @@ public class Main {
 	public static String move = "none";
 	public static int score = 0;
 	public static int[][] snakeList;
+	public static int[] applePos;
 	
 	static String[][] createScreen(List<List<Integer>> positions, int columns, int rows) {
 		String[][] screen = new String[rows][columns];
@@ -33,6 +34,7 @@ public class Main {
 		for (int i=0; i < positions.size(); i++) {
 				screen[positions.get(i).get(1)][positions.get(i).get(0)] = "█";
 		}
+		screen[applePos[1]][applePos[0]] = "█";
 		return screen;
 	}
 	
@@ -76,6 +78,10 @@ public class Main {
 			System.exit(0);
 		}
 		List<List<Integer>> pos = positions;
+		if (pos.get(0).get(1) == applePos[1] && pos.get(0).get(0) == applePos[0]) {
+			applePos = updateApplePos(maxSize[1], maxSize[0]);
+			score++;
+		}
 		for (int i=0; i<1; i++) {
 			List<Integer> position = pos.get(i);
 			int y = position.get(1);
@@ -89,7 +95,7 @@ public class Main {
 			newpos.add(x);
 			newpos.add(y);
 			pos.add(0, newpos);
-			if (pos.size() > score+1) pos.remove(pos.size()-1);
+			if (pos.size() > (score+1)*2) pos.remove(pos.size()-1);
 		}
 		return pos;
 	}
@@ -101,8 +107,14 @@ public class Main {
 		System.exit(0);
 	}
 	
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static int[] updateApplePos(int width, int height) {
 		Random rand = new Random();
+		int[] pos = {rand.nextInt(width-10)+5, rand.nextInt(height-10)+5};
+		return pos;
+	}
+	
+	public static void main(String[] args) throws InterruptedException, IOException {
+		// Get the dimensions for the game window
 		int[] dimensions = getTermSize();
 		int height = dimensions[0]-2;
 		int width = dimensions[1];
@@ -114,14 +126,21 @@ public class Main {
 			height = 48;
 			dimensions[0] = height+2;
 		}
+		
+		// Generate random numbers for the initial position and apple position
+		Random rand = new Random();
 		List<List<Integer>> positions = new ArrayList<List<Integer>>();
 		List<Integer> initialPos = new ArrayList<Integer>();
-		initialPos.add(rand.nextInt(width-1));
-		initialPos.add(rand.nextInt(height-1));
+		applePos = updateApplePos(width, height);
+		initialPos.add(rand.nextInt(width-10)+5);
+		initialPos.add(rand.nextInt(height-10)+5);
 		positions.add(initialPos);
+		
+		// Enter terminal raw mode for keyboard input
 		var term = TerminalBuilder.terminal();
 		term.enterRawMode();
 		var reader = term.reader();
+		
 		// New thread for keyboard input
 		new Thread(() -> {
 		    while (true) {
@@ -146,14 +165,13 @@ public class Main {
 				case 65:
 					move = "up";
 					break;
-				case 32:
-					score++;
-					break;
 				default:
 					break;
 				}
 		    }
 		}).start();;
+		
+		// Running loop of the program
 		while (true) {
 			positions = changePos(move, positions, dimensions);
 			String[][] screen = createScreen(positions, width, height);

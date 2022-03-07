@@ -13,7 +13,7 @@ import org.jline.terminal.TerminalBuilder;
 public class Main {
 	public static int key;
 	public static String move = "none";
-	public static int length = 1;
+	public static int score = 0;
 	public static int[][] snakeList;
 	
 	static String[][] createScreen(List<List<Integer>> positions, int columns, int rows) {
@@ -21,12 +21,12 @@ public class Main {
 		for (int i = 0; i < rows; i++) {
 			String[] row = new String[columns];
 			for (int j = 0; j < columns; j++) {
-					row[j] = "█";
+					row[j] = " ";
 			}
 			screen[i] = row;
 		}
 		for (int i=0; i < positions.size(); i++) {
-				screen[positions.get(i).get(1)][positions.get(i).get(0)] = " ";
+				screen[positions.get(i).get(1)][positions.get(i).get(0)] = "█";
 		}
 		return screen;
 	}
@@ -75,10 +75,15 @@ public class Main {
 			List<Integer> position = pos.get(i);
 			int y = position.get(1);
 			int x = position.get(0);
-			if (move == "up" && y > 0) {position.set(1, y-1);}
-			if (move == "down" && y+4 <= maxSize[0]) {position.set(1, y+1);}
-			if (move == "left" && x > 0) {position.set(0, x-1);}
-			if (move == "right" && x+2 <= maxSize[1]) {position.set(0, x+1);}
+			List<Integer> newpos = new ArrayList<Integer>();
+			if (move == "up" && y > 0) y--; //index 1
+			if (move == "down" && y+4 <= maxSize[0]) y++; //index 1
+			if (move == "left" && x > 0) x--; //index 0
+			if (move == "right" && x+2 <= maxSize[1]) x++; //index 0
+			newpos.add(x);
+			newpos.add(y);
+			pos.add(0, newpos);
+			if (pos.size() > score+1) pos.remove(pos.size()-1);
 		}
 		return pos;
 	}
@@ -86,7 +91,6 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		Random rand = new Random();
 		int[] dimensions = getTermSize();
-		int score = 0;
 		int height = dimensions[0]-2;
 		int width = dimensions[1];
 		if (width > 120) {
@@ -130,7 +134,7 @@ public class Main {
 					move = "up";
 					break;
 				case 32:
-					length++;
+					score++;
 					break;
 				default:
 					break;

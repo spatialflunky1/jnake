@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.Thread;
 import org.jline.terminal.TerminalBuilder;
+import java.lang.Runtime;
 
 public class Main {
 	public static int key;
@@ -17,7 +18,7 @@ public class Main {
 	public static int[][] snakeList;
 	public static int[] applePos;
 	
-	static String[][] createScreen(List<List<Integer>> positions, int columns, int rows) {
+	public static String[][] createScreen(List<List<Integer>> positions, int columns, int rows) {
 		String[][] screen = new String[rows][columns];
 		for (int i = 0; i < rows; i++) {
 			String[] row = new String[columns];
@@ -38,7 +39,7 @@ public class Main {
 		return screen;
 	}
 	
-	static void printScreen(String[][] layout, int score) {
+	public static void printScreen(String[][] layout, int score) {
 		for (int i = 0; i < layout.length; i++) {
 			String[] row = layout[i];
 			for (int j = 0; j < row.length; j++) {
@@ -49,12 +50,11 @@ public class Main {
 		System.out.println("Score: "+score+" (press 'q' to quit)");
 	}
 	
-	static void clearScreen() {
-	    System.out.print("\033[H\033[2J");  
-	    System.out.flush(); 
-	}
+	public final static void clearScreen() {
+	    System.out.println("\033[H\033[2J");
+        }
 	
-	static int[] getTermSize() throws IOException, InterruptedException {
+	public static int[] getTermSize() throws IOException, InterruptedException {
 		int[] dimensions = new int[2];
 		String os = System.getProperty("os.name");
 		if (os.contains("Linux")) {
@@ -72,7 +72,7 @@ public class Main {
 		return dimensions;
 	}
 	
-	static List<List<Integer>> changePos(String move, List<List<Integer>> positions, int[] maxSize) throws InterruptedException {
+	public static List<List<Integer>> changePos(String move, List<List<Integer>> positions, int[] maxSize) throws InterruptedException {
 		if (move == "quit") {
 			clearScreen();
 			System.exit(0);

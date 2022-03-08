@@ -4,9 +4,6 @@ Terminal snake written in Java
 ## Note
 Recomended to be ran in a terminal window as it is very laggy in the bare linux terminal
 
-## Debug Note
-Space bar is used to increase the score and length of the snake
-
 ## How to compile (outputs to <srcdir>/lib/build/libs/jnake.jar)
 * Linux:
 ```

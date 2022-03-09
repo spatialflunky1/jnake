@@ -7,15 +7,21 @@ Recomended to be ran in a terminal window as it is very laggy in the bare linux 
 ## How to compile (outputs to <srcdir>/lib/build/libs/jnake.jar)
 * Linux:
 ```
-./gradlew build
+./gradlew clean build
 ```
 * Windows:  
 CMD (cmd is stupid so this runs the batch file like its supposed to):  
-`gradlew build`  
+`gradlew clean build`  
 Powershell:  
-`.\gradlew.bat build`  
+`.\gradlew.bat clean build`  
+ 
+When compiled on windows:
+* The block charecter is broken (Appears fine when compiled on linux and ran on windows)
+* Screen doesn't clear as default cmd doesn't support ascii escape codes
+* Keyboard input doesn't work
+* On terminals where ascii escape codes are supported clearing the screen is laggy
   
-Currently it will compile but not run because it depends on the linux `stty` command  
+
   
 ## Planned features
-* Windows support
+* Windows support (hellish torture to try, might have to rewrite a lot)

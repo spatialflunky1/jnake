@@ -5,76 +5,19 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.Thread;
 import org.jline.terminal.TerminalBuilder;
-import java.lang.Runtime;
+import java.util.Scanner;
 
 public class Main {
-	public static int key;
 	public static String move = "none";
 	public static int score = 0;
 	public static int[][] snakeList;
 	public static int[] applePos;
 	
-	public static String[][] createScreen(List<List<Integer>> positions, int columns, int rows) {
-		String[][] screen = new String[rows][columns];
-		for (int i = 0; i < rows; i++) {
-			String[] row = new String[columns];
-			for (int j = 0; j < columns; j++) {
-				if (i == 0 || i == rows-1 || j == 0 || j == columns-1) {
-					row[j] = "█";
-				}
-				else {
-					row[j] = " ";
-				}
-			}
-			screen[i] = row;
-		}
-		for (int i=0; i < positions.size(); i++) {
-				screen[positions.get(i).get(1)][positions.get(i).get(0)] = "█";
-		}
-		screen[applePos[1]][applePos[0]] = "█";
-		return screen;
-	}
-	
-	public static void printScreen(String[][] layout, int score) {
-		for (int i = 0; i < layout.length; i++) {
-			String[] row = layout[i];
-			for (int j = 0; j < row.length; j++) {
-				System.out.print(row[j]);
-			}
-			System.out.print("\n");
-		}
-		System.out.println("Score: "+score+" (press 'q' to quit)");
-	}
-	
-	public final static void clearScreen() {
-	    System.out.println("\033[H\033[2J");
-        }
-	
-	public static int[] getTermSize() throws IOException, InterruptedException {
-		int[] dimensions = new int[2];
-		String os = System.getProperty("os.name");
-		if (os.contains("Linux")) {
-			ProcessBuilder sizeCommand = new ProcessBuilder("/bin/sh", "-c", "stty size </dev/tty");
-			final Process p = sizeCommand.start();
-			BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String[] temp = out.readLine().split(" ");
-			dimensions[0] = Integer.valueOf(temp[0]);
-			dimensions[1] = Integer.valueOf(temp[1]);
-		}
-		else {
-			dimensions[1] = 80;
-			dimensions[0] = 24;
-		}
-		return dimensions;
-	}
-	
 	public static List<List<Integer>> changePos(String move, List<List<Integer>> positions, int[] maxSize) throws InterruptedException {
 		if (move == "quit") {
-			clearScreen();
+			Screen.clearScreen();
 			System.exit(0);
 		}
 		List<List<Integer>> pos = positions;
@@ -101,7 +44,7 @@ public class Main {
 	}
 	
 	public static void gameOver() throws InterruptedException {
-		clearScreen();
+		Screen.clearScreen();
 		System.out.println("Game Over!");
 		TimeUnit.SECONDS.sleep(2);
 		System.exit(0);
@@ -113,19 +56,24 @@ public class Main {
 		return pos;
 	}
 	
+	public static int getRefreshRate() throws IOException {
+		// getInput gives warning that it is never closed but if you close it org.jline gives an IOException
+		@SuppressWarnings("resource")
+		Scanner getInput = new Scanner(System.in);
+		System.out.print("Enter Game Speed (lower is faster) (100): ");
+		String input = getInput.nextLine();
+		if (input.isEmpty()) input = "100";
+		return Integer.valueOf(input);
+	}
+	
 	public static void main(String[] args) throws InterruptedException, IOException {
-		// Get the dimensions for the game window
-		int[] dimensions = getTermSize();
+		// Get the dimensions for the game window (height,width)
+		int[] dimensions = Screen.getTermSize();
 		int height = dimensions[0]-2;
 		int width = dimensions[1];
-		if (width > 120) {
-			width = 120;
-			dimensions[1] = width;
-		}
-		if (height > 50) {
-			height = 48;
-			dimensions[0] = height+2;
-		}
+		
+		// Get refresh rate for wait time of each loop
+		int rate = getRefreshRate();
 		
 		// Generate random numbers for the initial position and apple position
 		Random rand = new Random();
@@ -143,6 +91,7 @@ public class Main {
 		
 		// New thread for keyboard input
 		new Thread(() -> {
+			int key = 0;
 		    while (true) {
 		    	try {
 					key = reader.read();
@@ -154,30 +103,30 @@ public class Main {
 					move = "quit";
 					break;
 				case 66:
-					move = "down";
+					if (move != "up") move = "down";
 					break;
 				case 67:
-					move = "right";
+					if (move != "left") move = "right";
 					break;
 				case 68:
-					move = "left";
+					if (move != "right") move = "left";
 					break;
 				case 65:
-					move = "up";
+					if (move != "down") move = "up";
 					break;
 				default:
 					break;
 				}
 		    }
-		}).start();;
+		}).start();
 		
 		// Running loop of the program
 		while (true) {
 			positions = changePos(move, positions, dimensions);
-			String[][] screen = createScreen(positions, width, height);
-			clearScreen();
-			printScreen(screen, score);
-			TimeUnit.MILLISECONDS.sleep(100);
+			String[][] screen = Screen.createScreen(positions, width, height, applePos);
+			Screen.clearScreen();
+			Screen.printScreen(screen, score);
+			TimeUnit.MILLISECONDS.sleep(rate);
 		}
 	}
 }

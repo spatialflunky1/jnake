@@ -25,3 +25,4 @@ When compiled on windows:
   
 ## Planned features
 * Windows support (hellish torture to try, might have to rewrite a lot)
+* Config dialog (colors and speed)

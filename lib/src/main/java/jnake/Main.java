@@ -56,24 +56,11 @@ public class Main {
 		return pos;
 	}
 	
-	public static int getRefreshRate() throws IOException {
-		// getInput gives warning that it is never closed but if you close it org.jline gives an IOException
-		@SuppressWarnings("resource")
-		Scanner getInput = new Scanner(System.in);
-		System.out.print("Enter Game Speed (lower is faster) (100): ");
-		String input = getInput.nextLine();
-		if (input.isEmpty()) input = "100";
-		return Integer.valueOf(input);
-	}
-	
 	public static void main(String[] args) throws InterruptedException, IOException {
 		// Get the dimensions for the game window (height,width)
 		int[] dimensions = Screen.getTermSize();
 		int height = dimensions[0]-2;
 		int width = dimensions[1];
-		
-		// Get refresh rate for wait time of each loop
-		int rate = getRefreshRate();
 		
 		// Generate random numbers for the initial position and apple position
 		Random rand = new Random();

@@ -21,4 +21,6 @@ public class Colors {
     public static final String CYAN_BACKGROUND = "\u001B[46m";
     public static final String WHITE_BACKGROUND = "\u001B[47m";
 
+    public static final String[] colors = {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE};
+    public static final String[] background_colors = {BLACK_BACKGROUND, RED_BACKGROUND, GREEN_BACKGROUND, YELLOW_BACKGROUND, BLUE_BACKGROUND, MAGENTA_BACKGROUND, CYAN_BACKGROUND, WHITE_BACKGROUND};
 }

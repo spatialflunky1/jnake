@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Thread;
 import org.jline.terminal.TerminalBuilder;
-import java.util.Scanner;
 
 public class Main {
 	public static String move = "none";
@@ -56,7 +56,7 @@ public class Main {
 		return pos;
 	}
 	
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static void runGame() throws InterruptedException, IOException {
 		// Get the dimensions for the game window (height,width)
 		int[] dimensions = Screen.getTermSize();
 		int height = dimensions[0]-2;
@@ -108,12 +108,47 @@ public class Main {
 		}).start();
 		
 		// Running loop of the program
+		int rate = 100;
+		String bgd_color="";
+		String snk_color="";
+		String apl_color="";
+		String bdr_color="";
+		try {
+			List<Integer> configuration = Config.readConfig();
+			bgd_color = Colors.background_colors[configuration.get(0)];
+			snk_color = Colors.colors[configuration.get(1)];
+			apl_color = Colors.colors[configuration.get(2)];
+			bdr_color = Colors.colors[configuration.get(3)];
+		}
+		catch (FileNotFoundException e) {
+			System.out.println("Config file not found, run with 'config' parameter before before first time run");
+			System.exit(0);
+		}
 		while (true) {
 			positions = changePos(move, positions, dimensions);
-			String[][] screen = Screen.createScreen(positions, width, height, applePos);
+			String[][] screen = Screen.createScreen(positions, width, height, applePos, snk_color, apl_color, bgd_color, bdr_color);
 			Screen.clearScreen();
-			Screen.printScreen(screen, score);
+			Screen.printScreen(screen, score, false);
 			TimeUnit.MILLISECONDS.sleep(rate);
+		}
+	}
+	
+	public static void main(String[] args) throws InterruptedException, IOException {
+		if (args.length > 0) {
+			if (args[0].toLowerCase().equals("config")) {
+				Config.startConfig();
+			}
+			if (args[0].toLowerCase().equals("help")) {
+				System.out.println("Jnake v1.0");
+				System.out.println("---------------------------------");
+				System.out.println("java -jar {filepath} [arguments]");
+				System.out.println("\narguments:");
+				System.out.println("help   - displays this list");
+				System.out.println("config - runs the configuration wizard");
+			}
+		}
+		else {
+			runGame();
 		}
 	}
 }

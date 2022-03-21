@@ -6,28 +6,28 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 public class Screen {
-	public static String[][] createScreen(List<List<Integer>> positions, int columns, int rows, int[] applePos) {
+	public static String[][] createScreen(List<List<Integer>> positions, int columns, int rows, int[] applePos, String apple_color, String snake_color, String background_color, String border_color) {
 		String[][] screen = new String[rows][columns];
 		for (int i = 0; i < rows; i++) {
 			String[] row = new String[columns];
 			for (int j = 0; j < columns; j++) {
 				if (i == 0 || i == rows-1 || j == 0 || j == columns-1) {
-					row[j] = "█";
+					row[j] = border_color+"█"+Colors.ANSI_RESET;
 				}
 				else {
-					row[j] = " ";
+					row[j] = background_color+" "+Colors.ANSI_RESET;
 				}
 			}
 			screen[i] = row;
 		}
 		for (int i=0; i < positions.size(); i++) {
-				screen[positions.get(i).get(1)][positions.get(i).get(0)] = Colors.GREEN+"█"+Colors.ANSI_RESET;
+				screen[positions.get(i).get(1)][positions.get(i).get(0)] = snake_color+"█"+Colors.ANSI_RESET;
 		}
-		screen[applePos[1]][applePos[0]] = Colors.RED+"█"+Colors.ANSI_RESET;
+		screen[applePos[1]][applePos[0]] = apple_color+"█"+Colors.ANSI_RESET;
 		return screen;
 	}
 	
-	public static void printScreen(String[][] layout, int score) {
+	public static void printScreen(String[][] layout, int score, boolean configuring) {
 		for (int i = 0; i < layout.length; i++) {
 			String[] row = layout[i];
 			for (int j = 0; j < row.length; j++) {
@@ -35,7 +35,7 @@ public class Screen {
 			}
 			System.out.print("\n");
 		}
-		System.out.println("Score: "+score+" (press 'q' to quit)");
+		if (!configuring) System.out.println("Score: "+score+" (press 'q' to quit)");
 	}
 	
 	public final static void clearScreen() {

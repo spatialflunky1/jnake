@@ -12,9 +12,9 @@ import java.io.BufferedReader;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.NonBlockingReader;
-import java.util.concurrent.TimeUnit;
 import java.lang.Thread;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Config {
 	public static int current = 0;
@@ -98,6 +98,15 @@ public class Config {
 		writer.close();
 	}
 	
+	public static void refreshScreen() throws IOException, InterruptedException {
+		int[] dimensions = Screen.getTermSize();
+		List<String> options = getOptions();
+		optLen = options.size();
+		String[][] screen = createScreen(options, dimensions[1], dimensions[0]-3);
+		Screen.clearScreen();
+		Screen.printScreen(screen, 0, true);
+	}
+	
 	public static void startConfig() throws IOException, InterruptedException {
 		Terminal term = TerminalBuilder.terminal();
 		term.enterRawMode();
@@ -115,15 +124,31 @@ public class Config {
 					switch (key) {
 					case 66:
 						if (num < optLen-3) num++;
+						if (mode.equals("radio")) {
+							try {refreshScreen();}
+							catch (IOException | InterruptedException e) {e.printStackTrace();}
+						}
 						break;
 					case 67:
 						select = "cancel";
+						if (mode.equals("radio")) {
+							try {refreshScreen();}
+							catch (IOException | InterruptedException e) {e.printStackTrace();}
+						}
 						break;
 					case 68:
 						select = "ok";
+						if (mode.equals("radio")) {
+							try {refreshScreen();}
+							catch (IOException | InterruptedException e) {e.printStackTrace();}
+						}
 						break;
 					case 65:
 						if (num > 0) num--;
+						if (mode.equals("radio")) {
+							try {refreshScreen();}
+							catch (IOException | InterruptedException e) {e.printStackTrace();}
+						}
 						break;
 					case 13:
 						if (select == "cancel") {
@@ -134,10 +159,19 @@ public class Config {
 						if (select == "ok") {
 							if (current == 3) {
 								running = false;
+								System.out.println(Colors.ANSI_RESET);
+								Screen.clearScreen();
+								
 							}
 							opts[current] = String.valueOf(num);
 							num = 0;
 							current++;
+							if (current != 4) {
+								if (mode.equals("radio")) {
+									try {refreshScreen();}
+									catch (IOException | InterruptedException e) {e.printStackTrace();}
+								}
+							}
 						}
 						break;
 					default:
@@ -153,18 +187,12 @@ public class Config {
 			}
 		});
 		keyInput.start();
-		int[] dimensions = Screen.getTermSize();
-		while (mode == "radio") {
-			List<String> options = getOptions();
-			optLen = options.size();
-			String[][] screen = createScreen(options, dimensions[1], dimensions[0]-3);
-			Screen.clearScreen();
- 			Screen.printScreen(screen, 0, true);
-			TimeUnit.MILLISECONDS.sleep(200);
-		}
+		// Must be run twice for background to fill
+		refreshScreen();
+		refreshScreen();
+		// Must wait or scanner doesn't work
+		while (mode.equals("radio")) TimeUnit.MILLISECONDS.sleep(1000);
 		keyInput.interrupt();
-		System.out.println(Colors.ANSI_RESET);
-		Screen.clearScreen();
         // getInput gives warning that it is never closed but if you
         @SuppressWarnings("resource")
         Scanner getInput = new Scanner(System.in);

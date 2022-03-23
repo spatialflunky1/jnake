@@ -193,11 +193,10 @@ public class Config {
 		// Must wait or scanner doesn't work
 		while (mode.equals("radio")) TimeUnit.MILLISECONDS.sleep(1000);
 		keyInput.interrupt();
-        // getInput gives warning that it is never closed but if you
-        @SuppressWarnings("resource")
         Scanner getInput = new Scanner(System.in);
         System.out.print("Enter Game Speed (lower is faster) (100): ");
         String input = getInput.nextLine();
+        getInput.close();
         if (input.isEmpty()) input = "100";
         opts[4] = input;
         writeConfig();

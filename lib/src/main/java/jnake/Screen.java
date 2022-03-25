@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 public class Screen {
-	public static String[][] createScreen(List<List<Integer>> positions, int columns, int rows, int[] applePos, String apple_color, String snake_color, String background_color, String border_color) {
+	public static String[][] createScreen(List<List<Integer>> positions, int columns, int rows, int[] applePos, String snake_color, String apple_color, String background_color, String border_color) {
 		String[][] screen = new String[rows][columns];
 		for (int i = 0; i < rows; i++) {
 			String[] row = new String[columns];

@@ -37,8 +37,9 @@ public class Main {
 			if (move == "right" && x+2 <= maxSize[1]) x++; //index 0
 			newpos.add(x);
 			newpos.add(y);
+			if (pos.contains(newpos) && move != "none") gameOver();
 			pos.add(0, newpos);
-			if (pos.size() > (score+1)*2) pos.remove(pos.size()-1);
+			if (pos.size() > (score+1)*3) pos.remove(pos.size()-1);
 		}
 		return pos;
 	}
@@ -119,6 +120,7 @@ public class Main {
 			snk_color = Colors.colors[configuration.get(1)];
 			apl_color = Colors.colors[configuration.get(2)];
 			bdr_color = Colors.colors[configuration.get(3)];
+			rate = configuration.get(4);
 		}
 		catch (FileNotFoundException e) {
 			System.out.println("Config file not found, run with 'config' parameter before before first time run");

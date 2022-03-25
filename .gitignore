@@ -12,3 +12,6 @@ build
 
 # Ignore compiled java files 
 *.class
+
+# Game configuration
+config.conf
